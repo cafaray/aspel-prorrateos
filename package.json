@@ -1,0 +1,39 @@
+{
+  "name": "aspel-prorrateos",
+  "version": "1.0.0",
+  "description": "Servicios propios del sistema de prorrateos",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "tap \"test/**/*.test.js\"",
+    "start": "fastify start -l info server.js",
+    "dev": "fastify start -w -l info -P server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cafaray/aspel-prorrateos.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cafaray/aspel-prorrateos/issues"
+  },
+  "homepage": "https://github.com/cafaray/aspel-prorrateos#readme",
+  "dependencies": {
+    "fastify": "^3.0.0",
+    "fastify-autoload": "^3.3.1",
+    "fastify-cli": "^2.13.0",
+    "fastify-formbody": "^5.2.0",
+    "fastify-multipart": "^5.3.0",
+    "fastify-plugin": "^3.0.0",
+    "fastify-sensible": "^3.1.0",
+    "got": "^12.0.1",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "tap": "^15.0.9"
+  }
+}

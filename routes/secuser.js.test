@@ -1,0 +1,29 @@
+'use strict'
+const data = require('../data/schemas/sesion')
+const {promisify} = require('util')
+const findByToken = promisify(data.getUserByToken)
+
+module.exports= function (fastify, options, done) {
+    fastify.get('/sec/token', async (request, reply) => {
+        try {
+            const {token} = request.headers['authorization']
+            if (token){
+                await findByToken(token)
+                .then((data) => {                    
+                    console.log(`==========    ==========    ==========\n===>secuser.data: ${JSON.stringify(data)}\n==========    ==========    ==========`)
+                    request.headers['userId'] = data.userId
+                })
+                .catch((err) => {
+                    console.log(`Error authenticating user by token: ${err}`)
+                    reply.status(500).send(`Error authenticating user by token ${token}`)
+                })                
+            } else {
+                reply.status(400).send('Bad request format, "Authorization" header is required.')
+            }
+        } catch(err) {
+            reply.status(403).send('User not valid')
+        }
+    })
+    done()
+
+}
