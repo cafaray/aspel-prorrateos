@@ -61,5 +61,5 @@ profile*
 cli
 
 # databases source
-data/ddl
+/data/ddl
 /data/SAE80EMPRE01.FDB
