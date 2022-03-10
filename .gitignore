@@ -63,3 +63,4 @@ cli
 # databases source
 /data/ddl
 /data/SAE80EMPRE01.FDB
+/data/COI80EMPRE1.FDB

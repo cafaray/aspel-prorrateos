@@ -1,5 +1,5 @@
 use iaspel
--- table to sabe conceptos related
+-- table to save conceptos related to the SAE
 DROP TABLE IF EXISTS ksae40t;
 CREATE TABLE ksae40t (
     id int auto_increment,
