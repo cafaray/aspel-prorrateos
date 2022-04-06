@@ -9,9 +9,11 @@ const SQL_FINDBY_ID = `SELECT idnumpon id, dsnombre name, cdnrocon conceptId, c.
                     FROM ${PONDERADOS} p INNER JOIN ${PROVEEDORES} s ON trim(p.cdcvepro) = trim(s.idcvesup)
                     INNER JOIN ${CONCEPTOS} c ON p.cdnrocon = c.idnumcto 
                     WHERE p.idnumpon = ?`
+
+                    // FROM ksae20t a INNER JOIN ksae40t c      ON a.cdnrocon = c.idnumcto INNER JOIN ksae10t p      ON trim(p.idcvesup) = trim(a.cdcvepro) WHERE trim(a.cdcvepro) = '0050'                    
 const SQL_FINDBY_IDSUPPLIER = `SELECT idnumpon id, dsnombre name, cdnrocon conceptId, c.dsnomcto concept, trim(cdcvepro) supplierId,  s.dsnomsup supplier
-                    FROM ${PONDERADOS} p INNER JOIN ${PROVEEDORES} s ON trim(p.cdcvepro) = trim(s.idcvesup)
-                    INNER JOIN ${CONCEPTOS} c ON p.cdnrocon = c.idnumcto
+                    FROM ${PONDERADOS} p INNER JOIN ${CONCEPTOS} c ON p.cdnrocon = c.idnumcto 
+                    INNER JOIN ${PROVEEDORES} s ON trim(p.cdcvepro) = trim(s.idcvesup) 
                     WHERE trim(p.cdcvepro) = ?`
 const SQL_FINDBY_SUPPLIER = `SELECT idnumpon id, dsnombre name, cdnrocon conceptId, c.dsnomcto concept, trim(cdcvepro) supplierId,  s.dsnomsup supplier
                     FROM ${PONDERADOS} p INNER JOIN ${PROVEEDORES} s ON trim(p.cdcvepro) = trim(s.idcvesup)
@@ -29,9 +31,9 @@ const SQL_FINDBY_SUPPLIER_CONCEPT = `SELECT idnumpon id, dsnombre name, cdnrocon
                     FROM ${PONDERADOS} p INNER JOIN ${PROVEEDORES} s ON trim(p.cdcvepro) = trim(s.idcvesup)
                     INNER JOIN ${CONCEPTOS} c ON p.cdnrocon = c.idnumcto
                     WHERE s.dsnomsup LIKE (?) AND c.dsnomcto LIKE(?);`                                        
-const SQL_FIND_DETAILS = `SELECT idnumpon id, dsctacon account, p.idunineg businessUnitId, u.dsunineg businessUnit, flporuni percentage 
+const SQL_FIND_DETAILS = `SELECT idnumpon id, dsctacon account, u.cdabrevi businessUnitId, u.dsunineg businessUnit, flporuni percentage 
                         FROM ${PONDERADODETALLES} p INNER JOIN ${UNIDADESNEGOCIO} u ON p.idunineg = u.idunineg
-                        WHERE p.idnumpon = ?`
+                        WHERE p.idnumpon = ? ORDER BY dsctacon, p.idunineg`
 const SQL_DELETEBY_ID = `DELETE FROM ${PONDERADOS} WHERE idnumpon = ?`
 const SQL_DELETEBY_ID_DETAIL = `DELETE FROM ${PONDERADODETALLES} WHERE idnumpon = ? AND idunineg = ? AND dsctacon=?;`
 const SQL_DELETEBY_ID_DETAILS = `DELETE FROM ${PONDERADODETALLES} WHERE idnumpon = ?`
@@ -88,11 +90,33 @@ async function getById(id, cb) {
     }
 }
 
+async function getBySupplier(supplier, cb) {
+    message.function = 'getBySupplier'
+    try{
+        const dbcon = await getDbConnection()
+        dbcon.query(SQL_FINDBY_SUPPLIER, [`%${supplier}%`], (err, data) => {
+            if (err){
+                message.err = err
+                console.log(message)
+                setImmediate(() => cb(err))
+            }
+            data = JSON.stringify(data)
+            //console.log(`data: ${data}`)
+            setImmediate(() => cb(null, data))
+        })
+        dbcon.release()
+    } catch(err){
+        message.err = err
+        console.log(message)
+        setImmediate(() => cb(err))
+    }
+}
+
 async function getBySupplierId(supplierId, cb) {
     message.function = 'getBySupplierId'
     try{
         const dbcon = await getDbConnection()
-        dbcon.query(SQL_FINDBY_SUPPLIER, [`%${supplierId}%`], (err, data) => {
+        dbcon.query(SQL_FINDBY_IDSUPPLIER, [supplierId], (err, data) => {
             if (err){
                 message.err = err
                 console.log(message)
@@ -386,5 +410,5 @@ async function updateDetail(id, item, cb) {
 }
 
 module.exports={
-    getAll, getById, getByConceptId, getBySupplierId, getDetails, add, addDetails, del, deleteDetail, getBySupplierConcept, updateDetail, addDetail
+    getAll, getById, getByConceptId, getBySupplier, getBySupplierId, getDetails, add, addDetails, del, deleteDetail, getBySupplierConcept, updateDetail, addDetail
 }

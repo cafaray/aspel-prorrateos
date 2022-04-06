@@ -1,19 +1,20 @@
 'use strict'
-const data = require('../../data/schemas/ponderado')
+const dataService = require('../../data/schemas/ponderado')
 const {promisify} = require('util')
 const URL = require('url')
-const get = promisify(data.getAll)
-const getId = promisify(data.getById)
-const getByConcept = promisify(data.getByConceptId)
-const getBySupplier = promisify(data.getBySupplierId)
-const getDetail = promisify(data.getDetails)
-const add = promisify(data.add)
-const del = promisify(data.del)
-const addDetails = promisify(data.addDetails)
-const getBySupplierConcept = promisify(data.getBySupplierConcept)
-const setDetail = promisify(data.updateDetail)
-const delDetail = promisify(data.deleteDetail)
-const addDetail = promisify(data.addDetail)
+const get = promisify(dataService.getAll)
+const getId = promisify(dataService.getById)
+const getByConcept = promisify(dataService.getByConceptId)
+const getBySupplier = promisify(dataService.getBySupplier)
+const getBySupplierId = promisify(dataService.getBySupplierId)
+const getDetail = promisify(dataService.getDetails)
+const add = promisify(dataService.add)
+const del = promisify(dataService.del)
+const addDetails = promisify(dataService.addDetails)
+const getBySupplierConcept = promisify(dataService.getBySupplierConcept)
+const setDetail = promisify(dataService.updateDetail)
+const delDetail = promisify(dataService.deleteDetail)
+const addDetail = promisify(dataService.addDetail)
 
 module.exports = async function (fastify, opts) {
   fastify.post('/', async function (request, reply) {
@@ -140,13 +141,13 @@ module.exports = async function (fastify, opts) {
   fastify.get('/:id/details', async function (request, reply) {
     const {id} = request.params
     try{
-      await getDetail(id)
-      .then((data) => {
-        reply.status(200).send(JSON.parse(data))
-      })
-      .catch((err) => {
-        reply.status(500).send(err)
-      })
+        await getDetail(id)
+        .then((data) => {
+          reply.status(200).send(JSON.parse(data))
+        })
+        .catch((err) => {
+          reply.status(500).send(err)
+        })
     } catch(err){
       reply.status(500).send(err)
     }
@@ -187,7 +188,7 @@ module.exports = async function (fastify, opts) {
         const body = request.body
         await addDetail(id, body)
         .then((data) => {
-          reply.status(201).send(data)
+          reply.status(201).send(JSON.parse(data))
         })
         .catch((err) => {
           reply.status(500).send(err)
@@ -196,4 +197,18 @@ module.exports = async function (fastify, opts) {
       reply.status(500).send(err)
     }
   })  
+  fastify.get('/proveedores/:id', async function (request, reply) {
+    const {id} = request.params
+    try {
+      await getBySupplierId(id)
+      .then((data) => {
+        reply.status(200).send(JSON.parse(data))
+      })
+      .catch((err) => {
+        reply.status(500).send(err)
+      })
+    } catch(err){
+      reply.status(500).send(err)
+    }
+  })
 }

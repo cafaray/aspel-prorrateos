@@ -7,7 +7,6 @@
     "test": "test"
   },
   "scripts": {
-    "test": "tap \"test/**/*.test.js\"",
     "start": "fastify start -l info server.js",
     "dev": "fastify start -w -l info -P server.js"
   },
@@ -23,9 +22,9 @@
   },
   "homepage": "https://github.com/cafaray/aspel-prorrateos#readme",
   "dependencies": {
-    "fastify": "^3.0.0",
+    "fastify": "^3.27.4",
     "fastify-autoload": "^3.3.1",
-    "fastify-cli": "^2.13.0",
+    "fastify-cli": "^2.15.0",
     "fastify-formbody": "^5.2.0",
     "fastify-multipart": "^5.3.0",
     "fastify-plugin": "^3.0.0",
