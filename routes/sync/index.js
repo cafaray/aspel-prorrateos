@@ -5,9 +5,12 @@ const {promisify} = require('util')
 const req = require('request')  
 const syncSuppliers = promisify(data.syncSuppliers)
 const syncConcepts = promisify(data.syncConcepts)
+const getSuppliers = promisify(data.getSuppliers)
+const getConcepts = promisify(data.getConcepts)
 
 function getRows(data, cb) {
     let rows = '[]'      
+    console.log('looking for:', data)
     req(`http://localhost:5001/${data}`, function (error, response, body) {
         console.log('statusCode:', response && response.statusCode)
         if (error) {
@@ -27,10 +30,44 @@ function getRows(data, cb) {
 const dataRows = promisify(getRows)
 
 module.exports=async function(fastify, opts) {
+    fastify.get('/suppliers', async (request, reply) => {
+        try {
+            await getSuppliers()
+            .then((result) => {
+                result = JSON.parse(result)
+                reply.status(200).send(result)
+            })
+            .catch((err) => {
+                reply.status(500).send(err)
+            })
+        }catch(err) {
+            console.log('Error getting suppliers from base: ', err)
+            reply.status(500).send(err)
+        }
+    })
+    fastify.get('/concepts', async (request, reply) => {
+        try {
+            await getConcepts()
+            .then((result) => {
+                result = JSON.parse(result)
+                reply.status(200).send(result)
+            })
+            .catch((err) => {
+                reply.status(500).send(err)
+            })
+        }catch(err) {
+            console.log('Error getting suppliers from base: ', err)
+            reply.status(500).send(err)
+        }
+    })    
     fastify.post('/suppliers', async (request, reply) => {
         try {
             let suppliers=[]
-            await dataRows('proveedores')
+            const {from} = request.body
+            console.log('proveedores from: ', from)
+            let resource = 'proveedores'
+            if (from) resource += `?from=${from}`            
+            await dataRows(resource)
             .then((result)=>{
                 if (result){
                     suppliers = result
