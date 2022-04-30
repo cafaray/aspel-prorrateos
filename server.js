@@ -53,6 +53,23 @@ module.exports = async function (fastify, opts) {
     }
     
   })
+  fastify.addHook("onRequest", (req, reply, done) => {
+    reply.startTime = Date.now();
+    req.log.info({ url: req.raw.url, id: req.id }, "received request");
+    done();
+  });
+  
+  fastify.addHook("onResponse", (req, reply, done) => {
+    req.log.info(
+      {
+        url: req.raw.url, // add url to response as well for simple correlating
+        statusCode: reply.raw.statusCode,
+        durationMs: Date.now() - reply.startTime, // recreate duration in ms - use process.hrtime() - https://nodejs.org/api/process.html#process_process_hrtime_bigint for most accuracy
+      },
+      "request completed"
+    );
+    done();
+  });
   // Do not touch the following lines
   // This loads all plugins defined in plugins
   // those should be support plugins that are reused

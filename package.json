@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "start": "fastify start -l info server.js",
+    "start": "PORT=5002 fastify start -L ./logconfig.js server.js",
     "dev": "fastify start -w -l info -P server.js"
   },
   "repository": {
@@ -33,6 +33,7 @@
     "mysql": "^2.18.1"
   },
   "devDependencies": {
-    "tap": "^15.0.9"
+    "tap": "^15.0.9",
+    "is-docker": "^1.1.0"
   }
 }
