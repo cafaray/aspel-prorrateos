@@ -20,6 +20,7 @@ module.exports = async function (fastify, opts) {
   fastify.post('/', async function (request, reply) {
     try {
       const porcentage = request.body
+      console.log('**  body request => '+porcentage)
       if (porcentage){
         console.log(`userId: ${request.headers["x-user-id"]}`)
         porcentage.userId = request.headers["x-user-id"]
